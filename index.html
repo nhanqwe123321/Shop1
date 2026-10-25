@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiniShop — Demo cửa hàng một file</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--ink:#182230;--muted:#64748b;--line:#e2e8f0;--brand:#2563eb;--brand2:#1d4ed8;--danger:#dc2626;--green:#15803d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{background:linear-gradient(120deg,#172554,#2563eb);color:#fff;padding:24px max(18px,calc((100% - 1120px)/2))}
+header h1{margin:0;font-size:clamp(24px,4vw,34px)}header p{margin:5px 0 0;color:#dbeafe}
+main{max-width:1120px;margin:22px auto;padding:0 16px 40px}.notice{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;border-radius:12px;padding:12px 14px;margin-bottom:18px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.tab{border:1px solid var(--line);background:#fff;padding:10px 15px;border-radius:10px;cursor:pointer;font-weight:650}.tab.active{background:var(--brand);border-color:var(--brand);color:white}
+.panel{display:none}.panel.active{display:block}.layout{display:grid;grid-template-columns:320px minmax(0,1fr);gap:18px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 4px 16px #0f172a08}.card h2,.card h3{margin:0 0 14px}.field{display:block;margin-bottom:12px}.field span{display:block;font-size:13px;font-weight:700;color:#475569;margin-bottom:5px}
+input,textarea,select{width:100%;border:1px solid #cbd5e1;border-radius:9px;padding:10px 11px;font:inherit;background:white;color:var(--ink)}textarea{min-height:78px;resize:vertical}input:focus,textarea:focus,select:focus{outline:3px solid #dbeafe;border-color:var(--brand)}
+button{font:inherit;cursor:pointer;border:0;border-radius:9px;padding:9px 12px;font-weight:650}.primary{background:var(--brand);color:white}.primary:hover{background:var(--brand2)}.secondary{background:#e2e8f0;color:#1e293b}.danger{background:#fee2e2;color:#991b1b}.success{background:#dcfce7;color:#166534}.small{padding:6px 9px;font-size:13px}
+.form-actions{display:flex;gap:8px;flex-wrap:wrap}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.toolbar input{flex:1;min-width:160px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}.stat{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px}.stat small{display:block;color:var(--muted)}.stat strong{font-size:21px}
+.products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.product{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;display:flex;flex-direction:column}.product img,.placeholder{width:100%;height:150px;object-fit:cover;background:#eaf0f8}.placeholder{display:grid;place-items:center;font-size:42px}.product-body{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1}.product h3{font-size:16px;margin:0}.price{font-weight:800;font-size:18px;color:#1d4ed8}.muted{color:var(--muted);font-size:13px}.row-between{display:flex;align-items:center;justify-content:space-between;gap:8px}.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:8px}.pill{display:inline-block;padding:3px 8px;border-radius:999px;background:#dcfce7;color:#166534;font-size:12px;font-weight:700}.pill.off{background:#f1f5f9;color:#475569}.empty{text-align:center;color:var(--muted);padding:30px 10px}.cart-line{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}.cart-line:last-child{border-bottom:0}.cart-line .info{flex:1}.qty{display:flex;align-items:center;gap:8px}.qty button{padding:3px 9px;background:#e2e8f0}.total{display:flex;justify-content:space-between;font-size:18px;font-weight:800;padding:14px 0}
+footer{text-align:center;color:var(--muted);padding:18px;font-size:12px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.products{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:1fr 1fr 1fr}.card{padding:14px}}
+@media(max-width:420px){.products{grid-template-columns:1fr}.product img,.placeholder{height:180px}.stats strong{font-size:17px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🛍️ MiniShop</h1>
+  <p>Ví dụ cửa hàng bán hàng trong một file HTML duy nhất</p>
+</header>
+<main>
+  <div class="notice"><strong>Lưu ý:</strong> Demo lưu sản phẩm trong trình duyệt bằng localStorage. Dữ liệu còn khi tải lại trên cùng trình duyệt, nhưng chưa đồng bộ sang thiết bị khác và chưa phải website bán hàng online thật.</div>
+  <nav class="tabs" aria-label="Khu vực website">
+    <button class="tab active" data-tab="shop">Cửa hàng khách xem</button>
+    <button class="tab" data-tab="admin">Quản trị sản phẩm</button>
+    <button class="tab" data-tab="cart">Giỏ hàng <span id="cartCount">0</span></button>
+  </nav>
+
+  <section class="panel active" id="shop">
+    <div class="row-between" style="margin-bottom:12px"><div><h2 style="margin:0">Sản phẩm đang bán</h2><div class="muted">Chỉ hiện mặt hàng được bật trạng thái “Đang bán”.</div></div></div>
+    <div class="toolbar"><input id="shopSearch" placeholder="Tìm tên sản phẩm..."><select id="categoryFilter"><option value="">Tất cả danh mục</option></select></div>
+    <div id="shopProducts" class="products"></div>
+  </section>
+
+  <section class="panel" id="admin">
+    <div class="layout">
+      <div class="card">
+        <h2 id="formTitle">Thêm sản phẩm</h2>
+        <form id="productForm">
+          <input type="hidden" id="productId">
+          <label class="field"><span>Tên sản phẩm *</span><input id="name" required maxlength="100" placeholder="Ví dụ: Bình nước inox"></label>
+          <label class="field"><span>Giá bán (VNĐ) *</span><input id="price" type="number" required min="0" step="1000" placeholder="85000"></label>
+          <label class="field"><span>Số lượng tồn kho *</span><input id="stock" type="number" required min="0" step="1" value="10"></label>
+          <label class="field"><span>Danh mục</span><input id="category" maxlength="50" placeholder="Ví dụ: Đồ gia dụng"></label>
+          <label class="field"><span>Link ảnh (không bắt buộc)</span><input id="image" type="url" placeholder="https://..."></label>
+          <label class="field"><span>Mô tả</span><textarea id="description" maxlength="500" placeholder="Mô tả ngắn về sản phẩm"></textarea></label>
+          <label class="field"><span>Trạng thái</span><select id="status"><option value="active">Đang bán</option><option value="archived">Ngừng bán / ẩn khỏi khách</option></select></label>
+          <div class="form-actions"><button class="primary" type="submit" id="saveButton">Lưu sản phẩm</button><button class="secondary" type="button" id="cancelEdit" hidden>Hủy sửa</button></div>
+        </form>
+      </div>
+      <div class="card">
+        <div class="row-between"><h2 style="margin-bottom:12px">Danh sách quản trị</h2><span class="muted" id="adminCount"></span></div>
+        <div class="stats"><div class="stat"><small>Tổng sản phẩm</small><strong id="statAll">0</strong></div><div class="stat"><small>Đang bán</small><strong id="statActive">0</strong></div><div class="stat"><small>Ngừng bán</small><strong id="statArchived">0</strong></div></div>
+        <div class="toolbar"><input id="adminSearch" placeholder="Tìm trong danh sách..."><select id="adminStatus"><option value="">Tất cả trạng thái</option><option value="active">Đang bán</option><option value="archived">Ngừng bán</option></select></div>
+        <div id="adminProducts"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="cart">
+    <div class="card">
+      <h2>Giỏ hàng</h2>
+      <div id="cartItems"></div>
+      <div class="total"><span>Tổng cộng</span><span id="cartTotal">0 đ</span></div>
+      <h3>Thông tin đặt hàng (demo)</h3>
+      <form id="checkoutForm">
+        <label class="field"><span>Họ tên *</span><input id="buyerName" required maxlength="100"></label>
+        <label class="field"><span>Số điện thoại *</span><input id="buyerPhone" required type="tel" maxlength="20" placeholder="09xxxxxxxx"></label>
+        <label class="field"><span>Địa chỉ giao hàng *</span><textarea id="buyerAddress" required maxlength="300"></textarea></label>
+        <label class="field"><span>Phương thức thanh toán</span><select id="payment"><option>Thanh toán khi nhận hàng (COD)</option><option>Chuyển khoản (demo, chưa xác minh giao dịch)</option></select></label>
+        <button class="primary" type="submit">Tạo đơn demo</button>
+      </form>
+      <div id="checkoutMessage" role="status" style="margin-top:12px"></div>
+      <p class="muted">Đây chỉ là mô phỏng đặt hàng trong trình duyệt; không gửi đơn thật và không thu tiền.</p>
+    </div>
+  </section>
+</main>
+<footer>MiniShop Demo · Một file HTML · Không dùng dữ liệu thanh toán thật</footer>
+
+<script>
+(function(){
+'use strict';
+const STORAGE_KEY='minishop_demo_products_v1';
+const CART_KEY='minishop_demo_cart_v1';
+const seed=[
+ {id:'p1',name:'Áo thun basic',price:120000,stock:12,category:'Thời trang',image:'',description:'Áo thun mặc hằng ngày.',status:'active'},
+ {id:'p2',name:'Bình nước inox',price:85000,stock:8,category:'Đồ gia dụng',image:'',description:'Bình nước tiện dụng.',status:'active'},
+ {id:'p3',name:'Tai nghe Bluetooth',price:250000,stock:0,category:'Điện tử',image:'',description:'Mẫu demo đang ngừng bán.',status:'archived'}
+];
+const $=id=>document.getElementById(id);
+function read(key,fallback){try{const v=JSON.parse(localStorage.getItem(key));return Array.isArray(v)?v:fallback}catch{return fallback}}
+let products=read(STORAGE_KEY,seed);
+let cart=read(CART_KEY,[]);
+function persistProducts(){localStorage.setItem(STORAGE_KEY,JSON.stringify(products))}
+function persistCart(){localStorage.setItem(CART_KEY,JSON.stringify(cart))}
+function money(n){return Number(n||0).toLocaleString('vi-VN')+' đ'}
+function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function validImage(url){try{const u=new URL(url);return ['http:','https:'].includes(u.protocol)}catch{return false}}
+function imgBlock(p){return p.image&&validImage(p.image)?`<img src="${safe(p.image)}" alt="${safe(p.name)}" loading="lazy" onerror="this.outerHTML='<div class=&quot;placeholder&quot;>📦</div>'">`:'<div class="placeholder">📦</div>'}
+function renderShop(){
+ const q=$('shopSearch').value.trim().toLowerCase(),cat=$('categoryFilter').value;
+ const list=products.filter(p=>p.status==='active'&&p.stock>0&&p.name.toLowerCase().includes(q)&&(!cat||p.category===cat));
+ $('shopProducts').innerHTML=list.length?list.map(p=>`<article class="product">${imgBlock(p)}<div class="product-body"><h3>${safe(p.name)}</h3><div class="price">${money(p.price)}</div><div class="muted">${safe(p.category||'Chưa phân loại')} · Còn ${p.stock}</div><div class="muted">${safe(p.description||'')}</div><div class="actions"><button class="primary" data-add="${safe(p.id)}">Thêm vào giỏ</button></div></div></article>`).join(''):'<div class="empty" style="grid-column:1/-1">Không có sản phẩm phù hợp hoặc sản phẩm đã ngừng bán.</div>';
+ const cats=[...new Set(products.filter(p=>p.status==='active'&&p.stock>0&&p.category).map(p=>p.category))];
+ const old=$('categoryFilter').value;
+ $('categoryFilter').innerHTML='<option value="">Tất cả danh mục</option>'+cats.map(c=>`<option value="${safe(c)}">${safe(c)}</option>`).join('');
+ if(cats.includes(old))$('categoryFilter').value=old;
+}
+function renderAdmin(){
+ const q=$('adminSearch').value.trim().toLowerCase(),st=$('adminStatus').value;
+ const list=products.filter(p=>p.name.toLowerCase().includes(q)&&(!st||p.status===st));
+ $('statAll').textContent=products.length;$('statActive').textContent=products.filter(p=>p.status==='active').length;$('statArchived').textContent=products.filter(p=>p.status==='archived').length;$('adminCount').textContent=list.length+' mặt hàng';
+ $('adminProducts').innerHTML=list.length?list.map(p=>`<div class="cart-line"><div style="font-size:27px">${p.image&&validImage(p.image)?'🖼️':'📦'}</div><div class="info"><strong>${safe(p.name)}</strong><div class="muted">${money(p.price)} · Tồn: ${p.stock} · ${safe(p.category||'Chưa phân loại')}</div><span class="pill ${p.status==='active'?'':'off'}">${p.status==='active'?'Đang bán':'Ngừng bán'}</span></div><div class="actions"><button class="secondary small" data-edit="${safe(p.id)}">Sửa</button><button class="${p.status==='active'?'secondary':'success'} small" data-toggle="${safe(p.id)}">${p.status==='active'?'Ngừng bán':'Mở bán'}</button><button class="danger small" data-delete="${safe(p.id)}">Xóa</button></div></div>`).join(''):'<div class="empty">Chưa có sản phẩm.</div>';
+}
+function cleanCart(){cart=cart.filter(item=>{const p=products.find(x=>x.id===item.id);return p&&p.status==='active'&&p.stock>0});cart=cart.map(item=>{const p=products.find(x=>x.id===item.id);return {...item,qty:Math.min(item.qty,p.stock)}});persistCart()}
+function renderCart(){
+ cleanCart();
+ const items=cart.map(i=>({...i,p:products.find(p=>p.id===i.id)})).filter(i=>i.p);
+ $('cartCount').textContent=cart.reduce((n,i)=>n+i.qty,0);
+ $('cartItems').innerHTML=items.length?items.map(({p,qty})=>`<div class="cart-line"><div class="info"><strong>${safe(p.name)}</strong><div class="muted">${money(p.price)} mỗi sản phẩm</div></div><div class="qty"><button data-minus="${safe(p.id)}">−</button><strong>${qty}</strong><button data-plus="${safe(p.id)}">+</button></div><button class="danger small" data-remove="${safe(p.id)}">Bỏ</button></div>`).join(''):'<div class="empty">Giỏ hàng đang trống.</div>';
+ $('cartTotal').textContent=money(items.reduce((n,i)=>n+i.p.price*i.qty,0));
+}
+function render(){renderShop();renderAdmin();renderCart()}
+function resetForm(){$('productForm').reset();$('productId').value='';$('stock').value='10';$('formTitle').textContent='Thêm sản phẩm';$('saveButton').textContent='Lưu sản phẩm';$('cancelEdit').hidden=true}
+$('productForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const id=$('productId').value;
+ const name=$('name').value.trim(),price=Number($('price').value),stock=Number($('stock').value),image=$('image').value.trim();
+ if(!name||!Number.isFinite(price)||price<0||!Number.isInteger(stock)||stock<0){alert('Vui lòng kiểm tra tên, giá và số lượng.');return}
+ if(image&&!validImage(image)){alert('Link ảnh phải bắt đầu bằng http:// hoặc https://');return}
+ const old=products.find(p=>p.id===id);
+ const item={id:id||('p_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7)),name,price,stock,category:$('category').value.trim(),image,description:$('description').value.trim(),status:$('status').value};
+ if(old)products=products.map(p=>p.id===id?item:p);else products.unshift(item);
+ persistProducts();resetForm();render();alert(old?'Đã cập nhật sản phẩm.':'Đã thêm sản phẩm.');
+});
+$('cancelEdit').addEventListener('click',resetForm);
+$('adminProducts').addEventListener('click',e=>{
+ const edit=e.target.closest('[data-edit]'),toggle=e.target.closest('[data-toggle]'),del=e.target.closest('[data-delete]');
+ if(edit){const p=products.find(x=>x.id===edit.dataset.edit);if(!p)return;$('productId').value=p.id;$('name').value=p.name;$('price').value=p.price;$('stock').value=p.stock;$('category').value=p.category||'';$('image').value=p.image||'';$('description').value=p.description||'';$('status').value=p.status;$('formTitle').textContent='Sửa sản phẩm';$('saveButton').textContent='Lưu thay đổi';$('cancelEdit').hidden=false;window.scrollTo({top:0,behavior:'smooth'});}
+ if(toggle){const p=products.find(x=>x.id===toggle.dataset.toggle);if(!p)return;p.status=p.status==='active'?'archived':'active';persistProducts();render();if(p.status==='archived')alert('Đã ngừng bán. Khách sẽ không thấy sản phẩm trong cửa hàng demo.');}
+ if(del){const p=products.find(x=>x.id===del.dataset.delete);if(!p)return;if(confirm(`Xóa vĩnh viễn "${p.name}" khỏi dữ liệu demo? Nên chọn “Ngừng bán” nếu muốn giữ lịch sử.`)){products=products.filter(x=>x.id!==p.id);cart=cart.filter(x=>x.id!==p.id);persistProducts();persistCart();render();}}
+});
+$('shopProducts').addEventListener('click',e=>{const b=e.target.closest('[data-add]');if(!b)return;const p=products.find(x=>x.id===b.dataset.add);if(!p||p.status!=='active'||p.stock<1){alert('Sản phẩm không còn bán hoặc đã hết hàng.');render();return}const item=cart.find(x=>x.id===p.id);if(item){if(item.qty>=p.stock){alert('Số lượng vượt quá tồn kho.');return}item.qty++}else cart.push({id:p.id,qty:1});persistCart();renderCart();b.textContent='Đã thêm ✓';setTimeout(()=>{if(b.isConnected)b.textContent='Thêm vào giỏ'},900)});
+$('cartItems').addEventListener('click',e=>{
+ const minus=e.target.closest('[data-minus]'),plus=e.target.closest('[data-plus]'),remove=e.target.closest('[data-remove]');
+ if(minus){const i=cart.find(x=>x.id===minus.dataset.minus);if(i){i.qty--;if(i.qty<1)cart=cart.filter(x=>x.id!==i.id)}}
+ if(plus){const i=cart.find(x=>x.id===plus.dataset.plus),p=products.find(x=>x.id===plus.dataset.plus);if(i&&p){if(i.qty>=p.stock){alert('Đã đạt số lượng tồn kho.');return}i.qty++}}
+ if(remove)cart=cart.filter(x=>x.id!==remove.dataset.remove);
+ persistCart();renderCart();
+});
+$('checkoutForm').addEventListener('submit',e=>{
+ e.preventDefault();cleanCart();
+ if(!cart.length){alert('Giỏ hàng trống hoặc sản phẩm không còn bán.');renderCart();return}
+ const items=cart.map(i=>({p:products.find(p=>p.id===i.id),qty:i.qty})).filter(i=>i.p);
+ if(items.some(i=>!i.p||i.p.status!=='active'||i.p.stock<i.qty)){alert('Có sản phẩm vừa hết hàng hoặc ngừng bán. Vui lòng kiểm tra giỏ hàng.');render();return}
+ const order={code:'DEMO-'+Date.now().toString().slice(-7),buyer:$('buyerName').value.trim(),phone:$('buyerPhone').value.trim(),address:$('buyerAddress').value.trim(),payment:$('payment').value,total:items.reduce((n,i)=>n+i.p.price*i.qty,0),items:items.map(i=>({name:i.p.name,price:i.p.price,qty:i.qty})),createdAt:new Date().toISOString()};
+ // Demo only: simulate stock changes locally. A real store must perform this transaction on the server.
+ items.forEach(i=>{i.p.stock-=i.qty});
+ let orders=read('minishop_demo_orders_v1',[]);orders.unshift(order);localStorage.setItem('minishop_demo_orders_v1',JSON.stringify(orders));
+ cart=[];persistCart();persistProducts();$('checkoutMessage').innerHTML=`<div class="notice"><strong>Đã tạo đơn demo ${safe(order.code)}.</strong><br>Tổng tiền: ${money(order.total)}. Đây chỉ là đơn lưu trong trình duyệt này, chưa gửi cho cửa hàng.</div>`;
+ $('checkoutForm').reset();render();
+});
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab));if(b.dataset.tab==='cart')renderCart()}));
+$('shopSearch').addEventListener('input',renderShop);$('categoryFilter').addEventListener('change',renderShop);$('adminSearch').addEventListener('input',renderAdmin);$('adminStatus').addEventListener('change',renderAdmin);
+if(!localStorage.getItem(STORAGE_KEY))persistProducts();
+render();
+})();
+</script>
+</body>
+</html>
