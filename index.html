@@ -1,184 +1,591 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lưu trữ liên kết - aNotepad</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f4f7fc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .card {
-            background: #ffffff;
-            max-width: 600px;
-            width: 100%;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            padding: 32px 28px;
-            transition: transform 0.2s ease;
-        }
-        .card:hover {
-            transform: translateY(-2px);
-        }
-        .icon {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-        .icon svg {
-            width: 56px;
-            height: 56px;
-            color: #2c7be5;
-        }
-        h1 {
-            font-size: 22px;
-            font-weight: 600;
-            color: #1a2b4c;
-            text-align: center;
-            margin-bottom: 8px;
-        }
-        .subtitle {
-            text-align: center;
-            color: #6b7a8f;
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-        .link-box {
-            background: #f0f4fe;
-            border: 1px solid #d0dff5;
-            border-radius: 12px;
-            padding: 18px 20px;
-            margin-bottom: 20px;
-            word-break: break-all;
-        }
-        .link-label {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #2c7be5;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-        .link-url {
-            font-size: 16px;
-            font-weight: 500;
-            color: #1a2b4c;
-            text-decoration: none;
-            display: block;
-            transition: color 0.2s;
-        }
-        .link-url:hover {
-            color: #2c7be5;
-            text-decoration: underline;
-        }
-        .meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-            color: #8a9bb5;
-            border-top: 1px solid #e9eef6;
-            padding-top: 18px;
-            margin-top: 8px;
-        }
-        .btn-open {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #2c7be5;
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 500;
-            padding: 12px 24px;
-            border-radius: 10px;
-            transition: background 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 12px rgba(44, 123, 229, 0.25);
-        }
-        .btn-open:hover {
-            background: #1a5bbf;
-            box-shadow: 0 6px 16px rgba(44, 123, 229, 0.35);
-        }
-        .btn-open svg {
-            width: 18px;
-            height: 18px;
-            fill: currentColor;
-        }
-        .footer {
-            text-align: center;
-            font-size: 12px;
-            color: #a0aec0;
-            margin-top: 22px;
-        }
-        @media (max-width: 480px) {
-            .card {
-                padding: 24px 20px;
-            }
-            .meta {
-                flex-direction: column;
-                gap: 12px;
-                align-items: flex-start;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Exam - Anti Cheat System</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+}
+
+header {
+    background: #172554;
+    color: white;
+    padding: 18px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h2 {
+    margin: 0;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 25px auto;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px #0000000c;
+    margin-bottom: 15px;
+}
+
+.question {
+    border-bottom: 1px solid #e2e8f0;
+    padding: 15px 0;
+}
+
+.question label {
+    display: block;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.question label:hover {
+    background: #eff6ff;
+}
+
+button {
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.submit {
+    background: #2563eb;
+    color: white;
+    width: 100%;
+}
+
+.stat {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.status {
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status.warning {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.status.danger {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+#logs {
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.log {
+    padding: 10px;
+    border-left: 4px solid #22c55e;
+    background: #f8fafc;
+    margin: 7px 0;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.log.warning {
+    border-color: #f59e0b;
+}
+
+.log.danger {
+    border-color: #ef4444;
+}
+
+.timer {
+    color: #facc15;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #64748b;
+}
+
+@media(max-width:750px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
 </head>
+
 <body>
-    <div class="card">
-        <!-- Icon minh họa -->
-        <div class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
-            </svg>
-        </div>
 
-        <h1>Liên kết đã được lưu trữ</h1>
-        <p class="subtitle">Trang ghi chú trực tuyến trên aNotepad</p>
+<header>
+    <h2>🎓 ONLINE EXAM</h2>
+    <div class="timer" id="timer">15:00</div>
+</header>
 
-        <!-- Khung hiển thị liên kết -->
-        <div class="link-box">
-            <div class="link-label">Địa chỉ liên kết</div>
-            <a href="https://vi.anotepad.com/notes/e8atdsht" 
-               class="link-url" 
-               target="_blank" 
-               rel="noopener noreferrer">
-                https://vi.anotepad.com/notes/e8atdsht
-            </a>
-        </div>
+<div class="container">
 
-        <!-- Nút mở liên kết -->
-        <div style="text-align: center; margin-bottom: 20px;">
-            <a href="https://vi.anotepad.com/notes/e8atdsht" 
-               class="btn-open" 
-               target="_blank" 
-               rel="noopener noreferrer">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
-                    <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
-                </svg>
-                Mở liên kết
-            </a>
-        </div>
+<!-- BÀI KIỂM TRA -->
+<main>
 
-        <!-- Thông tin bổ sung -->
-        <div class="meta">
-            <span>📌 Đã lưu vào: 23/11/2026</span>
-            <span>🔗 Nguồn: anotepad.com</span>
-        </div>
+<div class="card">
+    <h2>Bài kiểm tra trắc nghiệm</h2>
+    <p>Thời gian: 15 phút</p>
+    <p>Hãy chọn đáp án đúng cho các câu hỏi.</p>
+</div>
 
-        <div class="footer">
-            Trang lưu trữ liên kết – Nhấp vào nút phía trên để truy cập.
-        </div>
+<div class="card" id="exam">
+
+    <div class="question">
+        <b>Câu 1: HTML là viết tắt của?</b>
+        <label><input type="radio" name="q1" value="A"> A. HyperText Markup Language</label>
+        <label><input type="radio" name="q1" value="B"> B. HighText Machine Language</label>
+        <label><input type="radio" name="q1" value="C"> C. HyperTool Multi Language</label>
     </div>
+
+    <div class="question">
+        <b>Câu 2: JavaScript được sử dụng để làm gì?</b>
+        <label><input type="radio" name="q2" value="A"> A. Chỉ thiết kế giao diện</label>
+        <label><input type="radio" name="q2" value="B"> B. Tạo tương tác cho trang web</label>
+        <label><input type="radio" name="q2" value="C"> C. Thay thế hệ điều hành</label>
+    </div>
+
+    <div class="question">
+        <b>Câu 3: CSS dùng để làm gì?</b>
+        <label><input type="radio" name="q3" value="A"> A. Trang trí giao diện</label>
+        <label><input type="radio" name="q3" value="B"> B. Lưu trữ dữ liệu</label>
+        <label><input type="radio" name="q3" value="C"> C. Quản lý máy chủ</label>
+    </div>
+
+    <button class="submit" onclick="submitExam()">
+        NỘP BÀI KIỂM TRA
+    </button>
+
+</div>
+
+</main>
+
+<!-- BẢNG ANTI CHEAT -->
+<aside>
+
+<div class="card">
+    <h3>🛡️ Anti-Cheat Monitor</h3>
+
+    <div id="status" class="status">
+        ● HỆ THỐNG BÌNH THƯỜNG
+    </div>
+
+    <div class="stat">
+        <span>Điểm cảnh báo</span>
+        <b id="score">0</b>
+    </div>
+
+    <div class="stat">
+        <span>Số vi phạm ghi nhận</span>
+        <b id="violations">0</b>
+    </div>
+
+    <div class="stat">
+        <span>Trạng thái bài thi</span>
+        <b id="examStatus">Đang thi</b>
+    </div>
+
+    <div class="stat">
+        <span>Thời gian</span>
+        <b id="elapsed">00:00</b>
+    </div>
+</div>
+
+<div class="card">
+    <h3>📋 Nhật ký giám sát</h3>
+    <div id="logs"></div>
+</div>
+
+<div class="card">
+    <h3>⚙️ Ngưỡng cảnh báo</h3>
+    <p>0–19: Bình thường</p>
+    <p>20–49: Cảnh báo</p>
+    <p>50 trở lên: Nguy hiểm</p>
+    <button onclick="resetDemo()">Đặt lại mô phỏng</button>
+</div>
+
+</aside>
+</div>
+
+<footer>
+    Anti-Cheat Simulation v1.0 | Educational Demo
+</footer>
+
+<script>
+
+// ======================================
+// ANTI CHEAT ENGINE
+// ======================================
+
+const AntiCheat = {
+
+    score: 0,
+    violations: 0,
+    active: true,
+    startTime: Date.now(),
+    maxLogs: 100,
+
+    events: [],
+
+    addLog(type, message, points = 0) {
+
+        if (!this.active) return;
+
+        this.score += points;
+
+        if (points > 0) {
+            this.violations++;
+        }
+
+        const time = new Date().toLocaleTimeString();
+
+        this.events.unshift({
+            type,
+            message,
+            points,
+            time
+        });
+
+        this.events = this.events.slice(0, this.maxLogs);
+
+        this.render();
+
+        if (this.score >= 50) {
+            console.warn("ANTI-CHEAT: Mức cảnh báo cao");
+        }
+    },
+
+    render() {
+
+        document.getElementById("score").textContent =
+            this.score;
+
+        document.getElementById("violations").textContent =
+            this.violations;
+
+        const status = document.getElementById("status");
+
+        if (this.score >= 50) {
+
+            status.textContent = "● MỨC NGUY HIỂM";
+            status.className = "status danger";
+
+        } else if (this.score >= 20) {
+
+            status.textContent = "● ĐANG CẢNH BÁO";
+            status.className = "status warning";
+
+        } else {
+
+            status.textContent = "● HỆ THỐNG BÌNH THƯỜNG";
+            status.className = "status";
+        }
+
+        document.getElementById("logs").innerHTML =
+            this.events.map(event => {
+
+                let level = event.points >= 15
+                    ? "danger"
+                    : event.points > 0
+                    ? "warning"
+                    : "";
+
+                return `
+                    <div class="log ${level}">
+                        <b>${event.type}</b><br>
+                        ${event.message}<br>
+                        <small>${event.time} | +${event.points} điểm</small>
+                    </div>
+                `;
+
+            }).join("");
+    },
+
+    reset() {
+        this.score = 0;
+        this.violations = 0;
+        this.events = [];
+        this.startTime = Date.now();
+        this.active = true;
+
+        document.getElementById("examStatus").textContent =
+            "Đang thi";
+
+        this.addLog(
+            "SYSTEM",
+            "Đã khởi động lại hệ thống",
+            0
+        );
+    }
+};
+
+
+// ======================================
+// 1. PHÁT HIỆN CHUYỂN TAB
+// ======================================
+
+document.addEventListener("visibilitychange", () => {
+
+    if (!AntiCheat.active) return;
+
+    if (document.hidden) {
+
+        AntiCheat.addLog(
+            "TAB DETECTION",
+            "Phát hiện rời khỏi trang kiểm tra",
+            15
+        );
+
+    } else {
+
+        AntiCheat.addLog(
+            "TAB DETECTION",
+            "Người dùng quay lại trang kiểm tra",
+            0
+        );
+    }
+});
+
+
+// ======================================
+// 2. PHÁT HIỆN MẤT FOCUS
+// ======================================
+
+window.addEventListener("blur", () => {
+
+    AntiCheat.addLog(
+        "FOCUS",
+        "Cửa sổ kiểm tra mất Focus",
+        5
+    );
+
+});
+
+
+// ======================================
+// 3. PHÁT HIỆN CHUỘT PHẢI
+// ======================================
+
+document.addEventListener("contextmenu", e => {
+
+    e.preventDefault();
+
+    AntiCheat.addLog(
+        "MOUSE",
+        "Ghi nhận thao tác chuột phải",
+        2
+    );
+
+});
+
+
+// ======================================
+// 4. PHÁT HIỆN TỔ HỢP PHÍM
+// ======================================
+
+document.addEventListener("keydown", e => {
+
+    if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey &&
+         ["i", "j", "c"].includes(e.key.toLowerCase()))
+    ) {
+
+        AntiCheat.addLog(
+            "KEYBOARD",
+            "Ghi nhận tổ hợp phím liên quan DevTools",
+            5
+        );
+    }
+
+});
+
+
+// ======================================
+// 5. THAY ĐỔI KÍCH THƯỚC CỬA SỔ
+// ======================================
+
+let oldWidth = window.innerWidth;
+let oldHeight = window.innerHeight;
+
+window.addEventListener("resize", () => {
+
+    if (
+        Math.abs(window.innerWidth - oldWidth) > 150 ||
+        Math.abs(window.innerHeight - oldHeight) > 150
+    ) {
+
+        AntiCheat.addLog(
+            "WINDOW",
+            "Kích thước cửa sổ thay đổi đáng kể",
+            5
+        );
+    }
+
+    oldWidth = window.innerWidth;
+    oldHeight = window.innerHeight;
+
+});
+
+
+// ======================================
+// 6. ĐỒNG HỒ BÀI THI
+// ======================================
+
+let remaining = 15 * 60;
+
+const timer = setInterval(() => {
+
+    if (!AntiCheat.active) return;
+
+    remaining--;
+
+    const min = Math.floor(remaining / 60);
+    const sec = remaining % 60;
+
+    document.getElementById("timer").textContent =
+        String(min).padStart(2, "0") + ":" +
+        String(sec).padStart(2, "0");
+
+    if (remaining <= 0) {
+        submitExam();
+    }
+
+}, 1000);
+
+
+// ======================================
+// 7. THEO DÕI THỜI GIAN LÀM BÀI
+// ======================================
+
+setInterval(() => {
+
+    if (!AntiCheat.active) return;
+
+    const elapsed = Math.floor(
+        (Date.now() - AntiCheat.startTime) / 1000
+    );
+
+    const min = Math.floor(elapsed / 60);
+    const sec = elapsed % 60;
+
+    document.getElementById("elapsed").textContent =
+        String(min).padStart(2, "0") + ":" +
+        String(sec).padStart(2, "0");
+
+}, 1000);
+
+
+// ======================================
+// 8. NỘP BÀI
+// ======================================
+
+function submitExam() {
+
+    if (!AntiCheat.active) return;
+
+    AntiCheat.active = false;
+
+    clearInterval(timer);
+
+    let answers = {
+        q1: "A",
+        q2: "B",
+        q3: "A"
+    };
+
+    let correct = 0;
+
+    for (const q in answers) {
+
+        const selected = document.querySelector(
+            `input[name="${q}"]:checked`
+        );
+
+        if (selected && selected.value === answers[q]) {
+            correct++;
+        }
+    }
+
+    document.getElementById("examStatus").textContent =
+        "Đã nộp";
+
+    document.getElementById("exam").innerHTML = `
+        <h2>🎉 Đã nộp bài!</h2>
+        <h3>Kết quả: ${correct}/3 câu đúng</h3>
+        <p>Điểm cảnh báo: ${AntiCheat.score}</p>
+        <p>Số sự kiện ghi nhận: ${AntiCheat.violations}</p>
+    `;
+
+    AntiCheat.addLog(
+        "SYSTEM",
+        "Bài kiểm tra đã kết thúc",
+        0
+    );
+}
+
+
+// ======================================
+// 9. ĐẶT LẠI
+// ======================================
+
+function resetDemo() {
+
+    if (!confirm("Bạn muốn đặt lại bài kiểm tra?")) {
+        return;
+    }
+
+    location.reload();
+}
+
+
+// ======================================
+// KHỞI ĐỘNG
+// ======================================
+
+AntiCheat.addLog(
+    "SYSTEM",
+    "Anti-Cheat đã khởi động",
+    0
+);
+
+console.log("Anti-Cheat Simulation Started!");
+
+</script>
+
 </body>
 </html>
